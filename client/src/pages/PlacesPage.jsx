@@ -22,7 +22,7 @@ export default function PlacesPage() {
       setTimeout(() => {
         setSuccessMessage(""); // Clear the message
         navigate("/account/places");
-      }, 3000); // 3 seconds
+      }, 1000); // 3 seconds
     } catch (error) {
       console.error("Error saving place:", error);
       // Optionally, handle the error here
@@ -41,6 +41,8 @@ export default function PlacesPage() {
         <div>
           {action !== "new" && (
             <div className="text-center">
+              list of added places
+              <br />
               <Link
                 className="inline-flex gap-1 bg-primary text-white py-4 px-6 rounded-full"
                 to={"/account/places/new"}
