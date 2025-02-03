@@ -192,4 +192,65 @@ app.post("/places", (req, res) => {
   });
 });
 
+app.get("/places", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    const { id } = userData;
+    res.json(await Place.find({ owner: id }));
+  });
+});
+
+app.get("/places/:id", async (req, res) => {
+  try {
+    const place = await Place.findById(req.params.id);
+    if (!place) {
+      return res.status(404).json({ error: "Place not found" });
+    }
+    res.json(place);
+  } catch (error) {
+    console.error("Error fetching place:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.put("/places", async (req, res) => {
+  const { token } = req.cookies; // Extract token from cookies
+
+  // Verify the JWT token
+
+  // Destructure data from request body
+  const {
+    id,
+    title,
+    address,
+    addedPhotos,
+    description,
+    perks,
+    extraInfo,
+    checkIn,
+    checkOut,
+    maxGuests,
+  } = req.body;
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    const placeDoc = await Place.findById(id);
+    if (userData.id === placeDoc.owner.toString()) {
+      placeDoc.set({
+        title,
+        address,
+        photos: addedPhotos,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests,
+      });
+      await placeDoc.save();
+      res.json("ok");
+    }
+  });
+});
+
 app.listen(4000);

@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-import PlaceForm from "../placeForm";
+import PlaceForm from "./PlacesFormPage";
+import AccountNav from "../AccountNav";
+import PlacesFormPage from "./PlacesFormPage";
 
 export default function PlacesPage() {
   const { action } = useParams();
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
+  const [places, setPlaces] = useState([]);
 
+  useEffect(() => {
+    axios.get("/places").then(({ data }) => {
+      setPlaces(data);
+    });
+  }, []);
   async function addNewPlace(placeData) {
     try {
       console.log("photos to save", placeData.addedPhotos);
@@ -37,12 +45,10 @@ export default function PlacesPage() {
             {successMessage}
           </div>
         )}
-
+        <AccountNav />
         <div>
           {action !== "new" && (
             <div className="text-center">
-              list of added places
-              <br />
               <Link
                 className="inline-flex gap-1 bg-primary text-white py-4 px-6 rounded-full"
                 to={"/account/places/new"}
@@ -65,9 +71,30 @@ export default function PlacesPage() {
               </Link>
             </div>
           )}
+
+          <div className="mt-4">
+            {places.length > 0 &&
+              places.map((place) => (
+                <Link
+                  to={"/account/places/" + place._id}
+                  className="flex cursor-pointer gap-4 bg-gray-200 p-4 rounded-2xl"
+                >
+                  <div className="w-32 h-32 bg-gray-300">
+                    {place.photos.length > 0 && (
+                      <img src={place.photos[0]} alt="" />
+                    )}
+                  </div>
+                  <div className="grow-0 shrink">
+                    <h2 className="text-xl">{place.title}</h2>
+                    <p className="text-sm mt-2">{place.description}</p>
+                  </div>
+                </Link>
+              ))}
+          </div>
+
           {action === "new" && (
             <div>
-              <PlaceForm onSubmit={addNewPlace} />
+              <PlacesFormPage onSubmit={addNewPlace} />
             </div>
           )}
         </div>
