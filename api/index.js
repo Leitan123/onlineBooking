@@ -162,6 +162,7 @@ app.post("/places", (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
+    price,
   } = req.body;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) {
@@ -181,6 +182,7 @@ app.post("/places", (req, res) => {
         checkIn,
         checkOut,
         maxGuests,
+        price,
       });
 
       // Respond with the newly created place
@@ -230,6 +232,7 @@ app.put("/places", async (req, res) => {
     checkIn,
     checkOut,
     maxGuests,
+    price,
   } = req.body;
 
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -246,11 +249,27 @@ app.put("/places", async (req, res) => {
         checkIn,
         checkOut,
         maxGuests,
+        price,
       });
       await placeDoc.save();
       res.json("ok");
     }
   });
+});
+
+app.delete("/places/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Place.findByIdAndDelete(id);
+    res.json({ success: true, message: "Place deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting place:", error);
+    res.status(500).json({ success: false, message: "Error deleting place" });
+  }
+});
+
+app.get("/index-places", async (req, res) => {
+  res.json(await Place.find());
 });
 
 app.listen(4000);

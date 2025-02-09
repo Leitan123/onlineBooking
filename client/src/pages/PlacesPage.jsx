@@ -36,6 +36,16 @@ export default function PlacesPage() {
       // Optionally, handle the error here
     }
   }
+  async function deletePlace(placeId) {
+    try {
+      await axios.delete(`/places/${placeId}`);
+      setPlaces(places.filter((place) => place._id !== placeId));
+      setSuccessMessage("Place deleted successfully!");
+      setTimeout(() => setSuccessMessage(""), 1000);
+    } catch (error) {
+      console.error("Error deleting place:", error);
+    }
+  }
 
   return (
     <>
@@ -77,17 +87,33 @@ export default function PlacesPage() {
               places.map((place) => (
                 <Link
                   to={"/account/places/" + place._id}
-                  className="flex cursor-pointer gap-4 bg-gray-200 p-4 rounded-2xl"
+                  className="flex cursor-pointer gap-4 bg-gray-200 p-4 rounded-2xl mb-2"
+                  key={place._id} // Ensure each item has a unique key
                 >
-                  <div className="w-32 h-32 bg-gray-300">
+                  <div className="flex w-32 h-32 bg-gray-300">
                     {place.photos.length > 0 && (
-                      <img src={place.photos[0]} alt="" />
+                      <img
+                        src={"http://localhost:4000/uploads/" + place.photos[0]}
+                        alt=""
+                        className="w-full h-full object-cover rounded-lg"
+                      />
                     )}
                   </div>
-                  <div className="grow-0 shrink">
+                  <div className="grow">
                     <h2 className="text-xl">{place.title}</h2>
                     <p className="text-sm mt-2">{place.description}</p>
                   </div>
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault(); // Prevents navigation when clicking delete
+                      deletePlace(place._id);
+                    }}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 self-start"
+                  >
+                    Delete
+                  </button>
                 </Link>
               ))}
           </div>

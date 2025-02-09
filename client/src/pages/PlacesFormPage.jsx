@@ -19,6 +19,8 @@ export default function PlacesFormPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
   useEffect(() => {
     if (!id) return; // Prevent API call if no id exists
 
@@ -41,21 +43,6 @@ export default function PlacesFormPage() {
       .catch((error) => console.error("Error fetching place:", error));
   }, [id]);
 
-  function inputHeader(text) {
-    return <h2 className="text-2xl mt-4">{text}</h2>;
-  }
-  function inputDescription(text) {
-    return <p className="text-gray-500 text-sm">{text}</p>;
-  }
-  function preInput(header, description) {
-    return (
-      <>
-        {inputHeader(header)}
-        {inputDescription(description)}
-      </>
-    );
-  }
-
   async function savePlace(ev) {
     ev.preventDefault();
     const placeData = {
@@ -70,17 +57,28 @@ export default function PlacesFormPage() {
       maxGuests,
       price,
     };
-    if (id) {
-      // update
-      await axios.put("/places", {
-        id,
-        ...placeData,
-      });
-      setRedirect(true);
-    } else {
-      // new place
-      await axios.post("/places", placeData);
-      setRedirect(true);
+
+    try {
+      if (id) {
+        // update
+        await axios.put("/places", {
+          id,
+          ...placeData,
+        });
+        setSuccessMessage("Place updated successfully!");
+      } else {
+        // new place
+        await axios.post("/places", placeData);
+        setSuccessMessage("Place added successfully!");
+      }
+
+      // Automatically hide the message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage("");
+        setRedirect(true);
+      }, 3000);
+    } catch (error) {
+      console.error("Error saving place:", error);
     }
   }
 
@@ -91,47 +89,71 @@ export default function PlacesFormPage() {
   return (
     <div>
       <AccountNav />
+
+      {successMessage && (
+        <div className="fixed top-0 left-0 w-full bg-green-500 text-white text-center p-3 shadow-md z-50 flex items-center justify-center gap-2">
+          <span>{successMessage}</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+        </div>
+      )}
+
       <form onSubmit={savePlace}>
-        {preInput(
-          "Title",
-          "Title for your place. should be short and catchy as in advertisement"
-        )}
+        <h2 className="text-2xl mt-4">Title</h2>
+        <p className="text-gray-500 text-sm">
+          Title for your place. Should be short and catchy as in advertisement.
+        </p>
         <input
           type="text"
           value={title}
           onChange={(ev) => setTitle(ev.target.value)}
           placeholder="title, for example: My lovely apt"
         />
-        {preInput("Address", "Address to this place")}
+
+        <h2 className="text-2xl mt-4">Address</h2>
         <input
           type="text"
           value={address}
           onChange={(ev) => setAddress(ev.target.value)}
           placeholder="address"
         />
-        {preInput("Photos", "more = better")}
+
+        <h2 className="text-2xl mt-4">Photos</h2>
         <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
-        {preInput("Description", "description of the place")}
+
+        <h2 className="text-2xl mt-4">Description</h2>
         <textarea
           value={description}
           onChange={(ev) => setDescription(ev.target.value)}
         />
-        {preInput("Perks", "select all the perks of your place")}
+
+        <h2 className="text-2xl mt-4">Perks</h2>
         <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
           <Perks selected={perks} onChange={setPerks} />
         </div>
-        {preInput("Extra info", "house rules, etc")}
+
+        <h2 className="text-2xl mt-4">Extra info</h2>
         <textarea
           value={extraInfo}
           onChange={(ev) => setExtraInfo(ev.target.value)}
         />
-        {preInput(
-          "Check in&out times",
-          "add check in and out times, remember to have some time window for cleaning the room between guests"
-        )}
+
+        <h2 className="text-2xl mt-4">Check-in & Check-out times</h2>
         <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
           <div>
-            <h3 className="mt-2 -mb-1">Check in time</h3>
+            <h3 className="mt-2 -mb-1">Check-in time</h3>
             <input
               type="text"
               value={checkIn}
@@ -140,7 +162,7 @@ export default function PlacesFormPage() {
             />
           </div>
           <div>
-            <h3 className="mt-2 -mb-1">Check out time</h3>
+            <h3 className="mt-2 -mb-1">Check-out time</h3>
             <input
               type="text"
               value={checkOut}
