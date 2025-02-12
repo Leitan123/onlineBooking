@@ -5,7 +5,83 @@ import axios from "axios";
 export default function PlacePage() {
   const { id } = useParams();
   const [place, setPlace] = useState(null);
-  const [AllPhotos, setAllPhotos] = useState(false);
+  const [allPhotos, setAllPhotos] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Load favorite status from localStorage when the component mounts
+  useEffect(() => {
+    if (!id) return;
+
+    // First, check if it's in localStorage
+    const storedFavorite = localStorage.getItem(`favorite-${id}`);
+    if (storedFavorite !== null) {
+      setIsFavorite(JSON.parse(storedFavorite));
+    } else {
+      // Load place details
+      axios.get(`/places/${id}`).then((response) => {
+        setPlace(response.data);
+
+        // Check if place is a favorite by making an API request
+        axios
+          .get(`/bookings/${id}`, { withCredentials: true })
+          .then((favResponse) => {
+            const isFav = favResponse.data.isFavorite;
+            setIsFavorite(isFav);
+            localStorage.setItem(`favorite-${id}`, JSON.stringify(isFav)); // Store in localStorage
+          })
+          .catch(() => {
+            setIsFavorite(false); // Mark as not a favorite on error
+          });
+      });
+    }
+  }, [id]);
+
+  // Function to remove from favorites and update localStorage
+  async function removeFromFavorites(place) {
+    try {
+      const response = await axios.delete(`/bookings/${place._id}`, {
+        withCredentials: true,
+      });
+
+      setIsFavorite(false); // Mark as not favorite
+      localStorage.removeItem(`favorite-${place._id}`); // Remove from localStorage
+      alert("Removed from Favorites!");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error removing from favorites:", error);
+      alert("Failed to remove from Favorites.");
+    }
+  }
+
+  // Function to add to favorites and update localStorage
+  async function addToFavorites(place) {
+    try {
+      const response = await axios.post(
+        "/bookings",
+        {
+          placeId: place._id,
+          title: place.title,
+          address: place.address,
+          photos: place.photos,
+          description: place.description,
+          perks: place.perks,
+          extraInfo: place.extraInfo,
+          mobile: place.mobile,
+          mail: place.mail,
+          price: place.price,
+        },
+        { withCredentials: true }
+      );
+
+      setIsFavorite(true); // Mark as favorite
+      localStorage.setItem(`favorite-${place._id}`, JSON.stringify(true)); // Store in localStorage
+      alert("Added to Favorites!");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error adding to favorites:", error);
+      alert("Failed to add to Favorites.");
+    }
+  }
 
   useEffect(() => {
     if (!id) return;
@@ -17,7 +93,7 @@ export default function PlacePage() {
 
   if (!place) return "";
 
-  if (AllPhotos) {
+  if (allPhotos) {
     return (
       <div className="absolute inset-0 bg-black min-w-full min-h-full">
         <div className="p-8 grid gap-4 bg-black">
@@ -161,39 +237,105 @@ export default function PlacePage() {
           More Photos
         </button>
       </div>
-      <div className="my-4">
-        <h2 className="font-semibold text-2xl">Description</h2>
-        {place.description}
-      </div>
-      <div className="grid grid-cols-2">
+
+      <div className="grid grid-cols-2 gap-3">
         <div>
-          check-in: {place.checkIn}
-          <br />
-          check-out: {place.checkOut}
-          <br />
-          Max number of guests: {place.maxGuests}
+          <div className="my-4">
+            <h2 className="font-semibold text-2xl">Description</h2>
+            {place.description}
+          </div>
+          <div>
+            {place.perks?.length > 0 && (
+              <div className="py-8 mt-5 rounded-2xl pt-2">
+                <h2 className="font-semibold text-2xl mx-2">Perks</h2>
+                <div className="grid grid-cols-2 gap-4 mx-2 mt-4">
+                  {place.perks.map((perk, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-white p-3 rounded-lg"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-6 text-green-600"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 12.75l6 6 9-13.5"
+                        />
+                      </svg>
+                      <span className="text-gray-800">{perk}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
         <div>
-          <div className="bg-white shadow p-4 -mt-12 rounded-2xl ">
-            <div className="text-4xl text center">
-              Price: {place.price} / per night
+          <div className="bg-white shadow p-4 rounded-2xl mt-4">
+            <div className="text-4xl text-center">Price: {place.price} LKR</div>
+
+            <div className="flex mt-2 gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                />
+              </svg>
+              <span>{place.mobile}</span>
             </div>
-            <div>
-              <label htmlFor="Check In:"></label>
-              <input type="date" />
+
+            <div className="flex mt-2 gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+                />
+              </svg>
+
+              <a
+                href={`mailto:${place.mail}`}
+                className="text-blue-600 hover:underline"
+              >
+                {place.mail}
+              </a>
             </div>
-            <button className="primary mb-3 mt-3">Add to favourites</button>
-            <button className="primary">Contact Us</button>
+
+            <button
+              onClick={() =>
+                isFavorite ? removeFromFavorites(place) : addToFavorites(place)
+              }
+              className="w-full py-2 text-white rounded-lg bg-primary hover:bg-primary-dark mt-4"
+            >
+              {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+            </button>
           </div>
         </div>
       </div>
-      <div className="bg-white -mx-5 py-8 mt-5 rounded-2xl pt-2">
-        <div>
-          <h2 className="font-semibold text-2xl mx-2">Extra Info</h2>
-        </div>
-        <div className="my-4 mt-1 text-sm text-gray-700 leading-4 mx-2">
-          {place.extraInfo}
-        </div>
+      <div className=" items-center gap-2 bg-white p-3 rounded-lg ">
+        <h2 className="font-semibold text-2xl">Extra Info</h2>
+        <p className="text-sm text-gray-600">{place.extraInfo}</p>
       </div>
     </div>
   );

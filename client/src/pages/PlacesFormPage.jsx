@@ -14,9 +14,9 @@ export default function PlacesFormPage() {
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
   const [extraInfo, setExtraInfo] = useState("");
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
-  const [maxGuests, setMaxGuests] = useState(1);
+  const [mobile, setMobile] = useState("");
+  const [mail, setMail] = useState("");
+
   const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -35,9 +35,9 @@ export default function PlacesFormPage() {
         setDescription(data.description || "");
         setPerks(data.perks || []);
         setExtraInfo(data.extraInfo || "");
-        setCheckIn(data.checkIn || "");
-        setCheckOut(data.checkOut || "");
-        setMaxGuests(data.maxGuests || 1);
+        setMobile(data.mobile || "");
+        setMail(data.mail || "");
+
         setPrice(data.price || 100);
       })
       .catch((error) => console.error("Error fetching place:", error));
@@ -52,9 +52,9 @@ export default function PlacesFormPage() {
       description,
       perks,
       extraInfo,
-      checkIn,
-      checkOut,
-      maxGuests,
+      mobile,
+      mail,
+
       price,
     };
 
@@ -150,34 +150,30 @@ export default function PlacesFormPage() {
           onChange={(ev) => setExtraInfo(ev.target.value)}
         />
 
-        <h2 className="text-2xl mt-4">Check-in & Check-out times</h2>
+        <h2 className="text-2xl mt-4">Contacts</h2>
         <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
           <div>
-            <h3 className="mt-2 -mb-1">Check-in time</h3>
+            <h3 className="mt-2 -mb-1">Mobile</h3>
             <input
               type="text"
-              value={checkIn}
-              onChange={(ev) => setCheckIn(ev.target.value)}
-              placeholder="14"
+              value={mobile}
+              onChange={(ev) => setMobile(ev.target.value)}
+              placeholder="Enter mobile number"
             />
           </div>
           <div>
-            <h3 className="mt-2 -mb-1">Check-out time</h3>
+            <h3 className="mt-2 -mb-1">E-mail</h3>
             <input
-              type="text"
-              value={checkOut}
-              onChange={(ev) => setCheckOut(ev.target.value)}
-              placeholder="11"
+              type="email"
+              value={mail}
+              onChange={(ev) => setMail(ev.target.value)}
+              placeholder="Enter email"
             />
           </div>
-          <div>
-            <h3 className="mt-2 -mb-1">Max number of guests</h3>
-            <input
-              type="number"
-              value={maxGuests}
-              onChange={(ev) => setMaxGuests(ev.target.value)}
-            />
-          </div>
+        </div>
+
+        <h2 className="text-2xl mt-4">Price</h2>
+        <div className="grid gap-2 grid-cols-2 md:grid-cols-4">
           <div>
             <h3 className="mt-2 -mb-1">Price per night</h3>
             <input

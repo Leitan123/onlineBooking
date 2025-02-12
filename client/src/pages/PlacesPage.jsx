@@ -88,9 +88,9 @@ export default function PlacesPage() {
                 <Link
                   to={"/account/places/" + place._id}
                   className="flex cursor-pointer gap-4 bg-gray-200 p-4 rounded-2xl mb-2"
-                  key={place._id} // Ensure each item has a unique key
+                  key={place._id}
                 >
-                  <div className="flex w-32 h-32 bg-gray-300">
+                  <div className="flex w-32 h-32 bg-gray-300 flex-shrink-0">
                     {place.photos.length > 0 && (
                       <img
                         src={"http://localhost:4000/uploads/" + place.photos[0]}
@@ -104,10 +104,9 @@ export default function PlacesPage() {
                     <p className="text-sm mt-2">{place.description}</p>
                   </div>
 
-                  {/* Delete Button */}
                   <button
                     onClick={(e) => {
-                      e.preventDefault(); // Prevents navigation when clicking delete
+                      e.preventDefault();
                       deletePlace(place._id);
                     }}
                     className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 self-start"

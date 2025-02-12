@@ -4,6 +4,8 @@ const cors = require("cors");
 const { default: mongoose } = require("mongoose");
 require("dotenv").config();
 const User = require("./models/User");
+const Booking = require("./models/Booking");
+
 const Place = require("./models/Place.js");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
@@ -123,6 +125,7 @@ app.post("/upload-by-link", async (req, res) => {
 
 const photosMiddleware = multer({ dest: "uploads" });
 const path = require("path");
+const BookingModel = require("./models/Booking");
 
 app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
   const uploadedFiles = [];
@@ -159,9 +162,9 @@ app.post("/places", (req, res) => {
     description,
     perks,
     extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
+    mobile,
+    mail,
+
     price,
   } = req.body;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -179,9 +182,9 @@ app.post("/places", (req, res) => {
         description,
         perks,
         extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
+        mobile,
+        mail,
+
         price,
       });
 
@@ -229,9 +232,9 @@ app.put("/places", async (req, res) => {
     description,
     perks,
     extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
+    mobile,
+    mail,
+
     price,
   } = req.body;
 
@@ -246,9 +249,9 @@ app.put("/places", async (req, res) => {
         description,
         perks,
         extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
+        mobile,
+        mail,
+
         price,
       });
       await placeDoc.save();
@@ -270,6 +273,100 @@ app.delete("/places/:id", async (req, res) => {
 
 app.get("/index-places", async (req, res) => {
   res.json(await Place.find());
+});
+
+// Add a place to favorites
+app.post("/bookings", async (req, res) => {
+  const { token } = req.cookies;
+  const {
+    placeId,
+    title,
+    address,
+    photos,
+    description,
+    perks,
+    extraInfo,
+    mobile,
+    mail,
+    price,
+  } = req.body;
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) return res.status(401).json({ message: "Unauthorized" });
+
+    try {
+      const favorite = await Booking.create({
+        user: userData.id,
+        place: placeId,
+        title,
+        address,
+        photos,
+        description,
+        perks,
+        extraInfo,
+        mobile,
+        mail,
+        price,
+      });
+
+      res.json(favorite);
+    } catch (error) {
+      res.status(500).json({ message: "Error adding to favorites", error });
+    }
+  });
+});
+
+// Remove a place from favorites
+app.delete("/bookings/:placeId", async (req, res) => {
+  const { token } = req.cookies;
+  const { placeId } = req.params;
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) return res.status(401).json({ message: "Unauthorized" });
+
+    try {
+      const booking = await Booking.findOneAndDelete({
+        user: userData.id,
+        place: placeId,
+      });
+
+      if (!booking) {
+        return res.status(404).json({ message: "Favorite not found" });
+      }
+
+      res.json({ message: "Favorite removed" });
+    } catch (error) {
+      res.status(500).json({ message: "Error removing favorite", error });
+    }
+  });
+});
+
+// Example endpoint in backend to check if a place is in favorites
+app.get("/bookings/:id", (req, res) => {
+  const placeId = req.params.id;
+  const userId = req.user.id; // Assuming you have a logged-in user with req.user
+
+  // Check if the place is in the user's favorites
+  const isFavorite = checkIfFavorite(userId, placeId);
+  res.json({ isFavorite });
+});
+
+// Get all favorite places for a user
+app.get("/bookings", async (req, res) => {
+  const { token } = req.cookies;
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) return res.status(401).json({ message: "Unauthorized" });
+
+    try {
+      const favorites = await Booking.find({ user: userData.id }).populate(
+        "place"
+      );
+      res.json(favorites);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching favorites", error });
+    }
+  });
 });
 
 app.listen(4000);
