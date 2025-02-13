@@ -8,90 +8,63 @@ export default function PlacePage() {
   const [allPhotos, setAllPhotos] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Load favorite status from localStorage when the component mounts
   useEffect(() => {
     if (!id) return;
 
-    // First, check if it's in localStorage
-    const storedFavorite = localStorage.getItem(`favorite-${id}`);
-    if (storedFavorite !== null) {
-      setIsFavorite(JSON.parse(storedFavorite));
-    } else {
-      // Load place details
-      axios.get(`/places/${id}`).then((response) => {
-        setPlace(response.data);
-
-        // Check if place is a favorite by making an API request
-        axios
-          .get(`/bookings/${id}`, { withCredentials: true })
-          .then((favResponse) => {
-            const isFav = favResponse.data.isFavorite;
-            setIsFavorite(isFav);
-            localStorage.setItem(`favorite-${id}`, JSON.stringify(isFav)); // Store in localStorage
-          })
-          .catch(() => {
-            setIsFavorite(false); // Mark as not a favorite on error
-          });
-      });
-    }
-  }, [id]);
-
-  // Function to remove from favorites and update localStorage
-  async function removeFromFavorites(place) {
-    try {
-      const response = await axios.delete(`/bookings/${place._id}`, {
-        withCredentials: true,
-      });
-
-      setIsFavorite(false); // Mark as not favorite
-      localStorage.removeItem(`favorite-${place._id}`); // Remove from localStorage
-      alert("Removed from Favorites!");
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error removing from favorites:", error);
-      alert("Failed to remove from Favorites.");
-    }
-  }
-
-  // Function to add to favorites and update localStorage
-  async function addToFavorites(place) {
-    try {
-      const response = await axios.post(
-        "/bookings",
-        {
-          placeId: place._id,
-          title: place.title,
-          address: place.address,
-          photos: place.photos,
-          description: place.description,
-          perks: place.perks,
-          extraInfo: place.extraInfo,
-          mobile: place.mobile,
-          mail: place.mail,
-          price: place.price,
-        },
-        { withCredentials: true }
-      );
-
-      setIsFavorite(true); // Mark as favorite
-      localStorage.setItem(`favorite-${place._id}`, JSON.stringify(true)); // Store in localStorage
-      alert("Added to Favorites!");
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error adding to favorites:", error);
-      alert("Failed to add to Favorites.");
-    }
-  }
-
-  useEffect(() => {
-    if (!id) return;
-
+    // Fetch place details
     axios.get(`/places/${id}`).then((response) => {
       setPlace(response.data);
     });
+
+    // Fetch favorite status for the current user and place
+    axios
+      .get(`/bookings/${id}`, { withCredentials: true })
+      .then((response) => {
+        setIsFavorite(response.data.isFavorite);
+      })
+      .catch(() => {
+        setIsFavorite(false); // Default to false if there's an error
+      });
   }, [id]);
 
-  if (!place) return "";
+  // Toggle favorite status
+  const toggleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        await axios.delete(`/bookings/${id}`, { withCredentials: true });
+        setIsFavorite(false);
+        alert("Removed from Favorites!");
+      } else {
+        // Add to favorites
+        await axios.post(
+          "/bookings",
+          {
+            placeId: id,
+            title: place.title,
+            address: place.address,
+            photos: place.photos,
+            description: place.description,
+            perks: place.perks,
+            extraInfo: place.extraInfo,
+            mobile: place.mobile,
+            mail: place.mail,
+            price: place.price,
+          },
+          { withCredentials: true }
+        );
+        setIsFavorite(true);
+        alert("Added to Favorites!");
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      alert("Failed to update favorites.");
+    }
+  };
+
+  if (!place) {
+    return <div>Loading...</div>;
+  }
 
   if (allPhotos) {
     return (
@@ -322,12 +295,7 @@ export default function PlacePage() {
               </a>
             </div>
 
-            <button
-              onClick={() =>
-                isFavorite ? removeFromFavorites(place) : addToFavorites(place)
-              }
-              className="w-full py-2 text-white rounded-lg bg-primary hover:bg-primary-dark mt-4"
-            >
+            <button onClick={toggleFavorite}>
               {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </button>
           </div>

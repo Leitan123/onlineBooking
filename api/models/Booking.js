@@ -21,5 +21,9 @@ const FavoriteSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Favorite = mongoose.model("Bookings", FavoriteSchema);
+// Ensure the uniqueness of the `user` and `place` pair at the database level
+FavoriteSchema.index({ user: 1, place: 1 }, { unique: true });
+
+const Favorite = mongoose.model("Boookings", FavoriteSchema); // Fixed the model name
+
 module.exports = Favorite;

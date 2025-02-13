@@ -342,13 +342,36 @@ app.delete("/bookings/:placeId", async (req, res) => {
 });
 
 // Example endpoint in backend to check if a place is in favorites
-app.get("/bookings/:id", (req, res) => {
-  const placeId = req.params.id;
-  const userId = req.user.id; // Assuming you have a logged-in user with req.user
+app.get("/bookings/:id", async (req, res) => {
+  const { token } = req.cookies;
+  const { id: placeId } = req.params; // Extract place ID
 
-  // Check if the place is in the user's favorites
-  const isFavorite = checkIfFavorite(userId, placeId);
-  res.json({ isFavorite });
+  // Verify the JWT token
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      // Check if the place exists
+      const place = await Place.findById(placeId);
+      if (!place) {
+        return res.status(404).json({ message: "Place not found" });
+      }
+
+      // Check if the place is in the user's favorites
+      const favorite = await Booking.findOne({
+        user: userData.id,
+        place: placeId,
+      });
+
+      // Send the favorite status
+      res.json({ isFavorite: !!favorite });
+    } catch (error) {
+      console.error("Error checking favorite status:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
 });
 
 // Get all favorite places for a user
