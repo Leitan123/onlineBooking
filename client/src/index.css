@@ -18,5 +18,19 @@ button {
 }
 button.primary {
   background-color: "red";
-  @apply bg-primary p-2 w-full text-white rounded-2xl;
+  @apply bg-[#edbf6d] text-[#00032e] hover:bg-[#d9a856] p-2 w-full  rounded-2xl;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  animation: marquee 20s linear infinite;
 }

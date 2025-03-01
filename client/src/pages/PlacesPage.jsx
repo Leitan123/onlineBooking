@@ -11,31 +11,37 @@ export default function PlacesPage() {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
   const [places, setPlaces] = useState([]);
+  const [loading, setLoading] = useState(true); // State for loading
 
   useEffect(() => {
-    axios.get("/places").then(({ data }) => {
-      setPlaces(data);
-    });
+    axios
+      .get("/places")
+      .then(({ data }) => {
+        setPlaces(data);
+        setLoading(false); // Data fetched, stop loading
+      })
+      .catch(() => {
+        setLoading(false); // Stop loading on error
+      });
   }, []);
+
   async function addNewPlace(placeData) {
     try {
       console.log("photos to save", placeData.addedPhotos);
 
       await axios.post("/places", placeData);
 
-      // Set success message
       setSuccessMessage("Place saved successfully!");
 
-      // Hide message after 3 seconds
       setTimeout(() => {
-        setSuccessMessage(""); // Clear the message
+        setSuccessMessage("");
         navigate("/account/places");
-      }, 1000); // 3 seconds
+      }, 1000); // 1 second
     } catch (error) {
       console.error("Error saving place:", error);
-      // Optionally, handle the error here
     }
   }
+
   async function deletePlace(placeId) {
     try {
       await axios.delete(`/places/${placeId}`);
@@ -56,6 +62,7 @@ export default function PlacesPage() {
           </div>
         )}
         <AccountNav />
+
         <div>
           {action !== "new" && (
             <div className="text-center">
@@ -79,6 +86,19 @@ export default function PlacesPage() {
                 </svg>
                 Add new place
               </Link>
+            </div>
+          )}
+
+          {/* Show loading WebM video if data is being fetched */}
+          {loading && (
+            <div className="flex justify-center items-center h-64">
+              <video
+                src="/images/load.webm" // Replace with the correct path to your WebM video
+                autoPlay
+                loop
+                muted
+                className="w-64 h-64"
+              />
             </div>
           )}
 

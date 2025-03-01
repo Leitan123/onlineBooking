@@ -1,12 +1,14 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "./UserContext";
+
 export default function Header() {
   const { user } = useContext(UserContext);
   return (
     <div>
-      <header className="p-4 flex justify-between">
-        <Link to={"/"} className="flex items-center gap-1">
+      <header className="p-4 flex justify-between bg-[#00032e] shadow-lg">
+        {/* Logo and Home Link */}
+        <Link to={"/"} className="flex items-center gap-1 text-[#edbf6d]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -23,13 +25,15 @@ export default function Header() {
           </svg>
           <span className="font-bold text-xl">Booker</span>
         </Link>
-        <div className="flex gap-2 border border-gray-300 rounded-full py-2 px-4 shadow-md shadow-gray-300">
-          <div>Hotel</div>
-          <div className="border-l border-gray-300"></div>
-          <div>duration</div>
-          <div className="border-l border-gray-300"></div>
-          <div>guests</div>
-          <button className="bg-primary text-white p-1 rounded-full">
+
+        {/* Filter Section */}
+        <div className="flex gap-2 border border-[#edbf6d] rounded-full py-2 px-4 shadow-md">
+          <div className="text-[#edbf6d]">Hotel</div>
+          <div className="border-l border-[#edbf6d]"></div>
+          <div className="text-[#edbf6d]">Duration</div>
+          <div className="border-l border-[#edbf6d]"></div>
+          <div className="text-[#edbf6d]">Guests</div>
+          <button className="bg-[#edbf6d] text-[#00032e] p-1 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -46,9 +50,11 @@ export default function Header() {
             </svg>
           </button>
         </div>
+
+        {/* User Account Section */}
         <Link
           to={user ? "/account" : "/login"}
-          className="flex item-center gap-2 border border-gray-300 rounded-full py-2 px-4"
+          className="flex items-center gap-2 border border-[#edbf6d] rounded-full py-2 px-4 text-[#edbf6d] hover:text-white transition duration-300"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -63,7 +69,7 @@ export default function Header() {
             />
           </svg>
 
-          <div className="">
+          <div className="text-[#edbf6d]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -77,7 +83,8 @@ export default function Header() {
               />
             </svg>
           </div>
-          {!!user && <div>{user.name}</div>}
+
+          {!!user && <div className="text-[#edbf6d]">{user.name}</div>}
         </Link>
       </header>
     </div>

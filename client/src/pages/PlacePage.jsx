@@ -295,7 +295,7 @@ export default function PlacePage() {
               </a>
             </div>
 
-            <button onClick={toggleFavorite}>
+            <button className="primary mt-4" onClick={toggleFavorite}>
               {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </button>
           </div>

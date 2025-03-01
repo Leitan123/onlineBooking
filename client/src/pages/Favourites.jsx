@@ -29,7 +29,7 @@ export default function Favorites() {
           {favorites.length > 0 ? (
             favorites.map((place) => (
               <Link
-                to={`/account/bookings/${place._id}`}
+                to={`/account/bookings/${place.place._id}`}
                 key={place._id}
                 className="flex cursor-pointer gap-4 bg-gray-200 p-4 rounded-2xl mb-2"
               >
