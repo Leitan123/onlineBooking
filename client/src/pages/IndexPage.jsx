@@ -67,7 +67,7 @@ export default function IndexPage() {
               {sliderImages.map((image, index) => (
                 <div key={index} className="relative">
                   <img
-                    className="w-full h-[500px] object-cover rounded-none md:rounded-2xl transition-transform duration-500 hover:scale-105"
+                    className="w-full h-[500px] object-cover  transition-transform duration-500 hover:scale-105"
                     src={image}
                     alt={`Slider Image ${index + 1}`}
                   />
@@ -166,6 +166,30 @@ export default function IndexPage() {
                   </Link>
                 ))}
             </div>
+          </div>
+          <div className="flex justify-center mt-6">
+            <Link
+              to="/Allplaces"
+              className="flex items-center gap-2 bg-[#edbf6d] text-[#00032e] hover:bg-[#d9a856] px-4 py-2 rounded-2xl shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+            >
+              More
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3"
+                  />
+                </svg>
+              </span>
+            </Link>
           </div>
         </>
       )}

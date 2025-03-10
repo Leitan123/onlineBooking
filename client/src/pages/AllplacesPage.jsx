@@ -79,46 +79,31 @@ export default function AllplacesPage() {
           </div>
 
           {/* Places Grid */}
-          <div className="mt-8 overflow-x-hidden px-4">
-            <div className="flex space-x-6 animate-marquee">
-              {places.length > 0 &&
-                places.map((place) => (
+          <div className="mt-8 px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredPlaces.length > 0 &&
+                filteredPlaces.map((place) => (
                   <Link
                     to={"/place/" + place._id}
                     key={place._id}
-                    className="flex-shrink-0 w-[300px]"
+                    className="w-full"
                   >
-                    <div className="rounded-2xl overflow-hidden relative group">
+                    <div className="relative rounded-2xl overflow-hidden group shadow-lg">
                       {place.photos?.[0] && (
                         <img
-                          className="w-full h-[250px] object-cover rounded-2xl transform transition-transform duration-300 group-hover:scale-110"
+                          className="w-full h-[250px] object-cover rounded-2xl transform transition-transform duration-300 group-hover:scale-105"
                           src={
                             "http://localhost:4000/uploads/" + place.photos[0]
                           }
                           alt={place.title}
                         />
                       )}
-                    </div>
-                  </Link>
-                ))}
-              {/* Duplicate the images for infinite loop */}
-              {places.length > 0 &&
-                places.map((place) => (
-                  <Link
-                    to={"/place/" + place._id}
-                    key={`duplicate-${place._id}`}
-                    className="flex-shrink-0 w-[300px]"
-                  >
-                    <div className="rounded-2xl overflow-hidden relative group">
-                      {place.photos?.[0] && (
-                        <img
-                          className="w-full h-[250px] object-cover rounded-2xl transform transition-transform duration-300 group-hover:scale-110"
-                          src={
-                            "http://localhost:4000/uploads/" + place.photos[0]
-                          }
-                          alt={place.title}
-                        />
-                      )}
+
+                      {/* Title and Price */}
+                      <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black text-white p-4 text-lg font-semibold">
+                        <h3>{place.title}</h3>
+                        <p>${place.price}</p>
+                      </div>
                     </div>
                   </Link>
                 ))}

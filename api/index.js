@@ -166,6 +166,8 @@ app.post("/places", (req, res) => {
     mail,
 
     price,
+    district,
+    propertyType,
   } = req.body;
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) {
@@ -186,6 +188,8 @@ app.post("/places", (req, res) => {
         mail,
 
         price,
+        district,
+        propertyType,
       });
 
       // Respond with the newly created place
@@ -236,6 +240,8 @@ app.put("/places", async (req, res) => {
     mail,
 
     price,
+    district,
+    propertyType,
   } = req.body;
 
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -253,6 +259,8 @@ app.put("/places", async (req, res) => {
         mail,
 
         price,
+        district,
+        propertyType,
       });
       await placeDoc.save();
       res.json("ok");
@@ -289,6 +297,8 @@ app.post("/bookings", async (req, res) => {
     mobile,
     mail,
     price,
+    district,
+    propertyType,
   } = req.body;
 
   jwt.verify(token, jwtSecret, {}, async (err, userData) => {
@@ -307,6 +317,8 @@ app.post("/bookings", async (req, res) => {
         mobile,
         mail,
         price,
+        district,
+        propertyType,
       });
 
       res.json(favorite);

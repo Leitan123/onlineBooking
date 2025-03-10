@@ -301,9 +301,11 @@ export default function PlacePage() {
           </div>
         </div>
       </div>
-      <div className=" items-center gap-2 bg-white p-3 rounded-lg ">
+      <div className="items-center gap-2 bg-white p-3 rounded-lg">
         <h2 className="font-semibold text-2xl">Extra Info</h2>
-        <p className="text-sm text-gray-600">{place.extraInfo}</p>
+        <p className="text-sm text-gray-600 break-words whitespace-pre-line">
+          {place.extraInfo}
+        </p>
       </div>
     </div>
   );

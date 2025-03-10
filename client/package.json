@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lottiefiles/dotlottie-react": "^0.13.0",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "axios": "^1.7.9",
     "framer-motion": "^12.4.2",
     "lucide-react": "^0.475.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-lottie": "^1.2.10",
     "react-router-dom": "^6.26.1",
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1"

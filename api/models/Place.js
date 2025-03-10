@@ -12,6 +12,10 @@ const placeSchema = new mongoose.Schema({
   mail: String,
 
   price: Number,
+
+  // New fields
+  district: { type: String }, // Add the district field
+  propertyType: { type: String }, // Add the propertyType field
 });
 
 const PlaceModel = mongoose.model("Place", placeSchema);

@@ -16,8 +16,11 @@ export default function PlacesFormPage() {
   const [extraInfo, setExtraInfo] = useState("");
   const [mobile, setMobile] = useState("");
   const [mail, setMail] = useState("");
-
   const [price, setPrice] = useState(100);
+
+  const [district, setDistrict] = useState("");
+  const [propertyType, setPropertyType] = useState("");
+
   const [redirect, setRedirect] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -37,8 +40,9 @@ export default function PlacesFormPage() {
         setExtraInfo(data.extraInfo || "");
         setMobile(data.mobile || "");
         setMail(data.mail || "");
-
         setPrice(data.price || 100);
+        setDistrict(data.district || "");
+        setPropertyType(data.propertyType || "");
       })
       .catch((error) => console.error("Error fetching place:", error));
   }, [id]);
@@ -54,8 +58,9 @@ export default function PlacesFormPage() {
       extraInfo,
       mobile,
       mail,
-
       price,
+      district,
+      propertyType,
     };
 
     try {
@@ -86,8 +91,41 @@ export default function PlacesFormPage() {
     return <Navigate to={"/account/places"} />;
   }
 
+  // District options for Sri Lanka
+  const districts = [
+    "Colombo",
+    "Gampaha",
+    "Kalutara",
+    "Kandy",
+    "Matale",
+    "Nuwara Eliya",
+    "Galle",
+    "Matara",
+    "Hambantota",
+    "Jaffna",
+    "Kilinochchi",
+    "Mannar",
+    "Vavuniya",
+    "Mullaitivu",
+    "Batticaloa",
+    "Ampara",
+    "Trincomalee",
+    "Polonnaruwa",
+    "Anuradhapura",
+    "Kurunegala",
+    "Kegalle",
+    "Ratnapura",
+    "Badulla",
+    "Monaragala",
+    "Puttalam",
+    "Mullaitivu",
+  ];
+
+  // Property types
+  const propertyTypes = ["House", "Office", "Land", "Apartment"];
+
   return (
-    <div>
+    <div className="p-4">
       <AccountNav />
 
       {successMessage && (
@@ -183,6 +221,37 @@ export default function PlacesFormPage() {
             />
           </div>
         </div>
+
+        {/* District Dropdown */}
+        <h2 className="text-2xl mt-4">District</h2>
+        <select
+          value={district}
+          onChange={(ev) => setDistrict(ev.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md"
+        >
+          <option value="">Select District</option>
+          {districts.map((districtOption, index) => (
+            <option key={index} value={districtOption}>
+              {districtOption}
+            </option>
+          ))}
+        </select>
+
+        {/* Property Type Dropdown */}
+        <h2 className="text-2xl mt-4">Property Type</h2>
+        <select
+          value={propertyType}
+          onChange={(ev) => setPropertyType(ev.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-md"
+        >
+          <option value="">Select Property Type</option>
+          {propertyTypes.map((typeOption, index) => (
+            <option key={index} value={typeOption}>
+              {typeOption}
+            </option>
+          ))}
+        </select>
+
         <button className="primary my-4">Save</button>
       </form>
     </div>
