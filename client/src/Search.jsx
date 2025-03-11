@@ -1,170 +1,77 @@
 import { useState } from "react";
 
-export default function Search() {
-  const [selectedDistrict, setSelectedDistrict] = useState("Select District");
-  const [selectedPriceRange, setSelectedPriceRange] =
-    useState("Select Price Range");
-  const [selectedPropertyType, setSelectedPropertyType] = useState(
-    "Select Property Type"
-  );
+export default function Search({
+  setSelectedDistrict,
+  setSelectedPriceRange,
+  setSelectedPropertyType,
+}) {
+  const [district, setDistrict] = useState("");
+  const [priceRange, setPriceRange] = useState("");
+  const [propertyType, setPropertyType] = useState("");
 
-  const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false);
-  const [isPriceRangeDropdownOpen, setIsPriceRangeDropdownOpen] =
-    useState(false);
-  const [isPropertyTypeDropdownOpen, setIsPropertyTypeDropdownOpen] =
-    useState(false);
-
-  const districts = [
-    "Colombo",
-    "Kandy",
-    "Galle",
-    "Jaffna",
-    "Anuradhapura",
-    "Nuwara Eliya",
-    "Gampaha",
-    "Matara",
-    "Kurunegala",
-  ];
-
-  const priceRanges = ["Under 1M", "1M - 5M", "5M - 10M", "Above 10M"];
-
-  const propertyTypes = ["Apartment", "House", "Land", "Commercial"];
+  const handleSearch = () => {
+    setSelectedDistrict(district);
+    setSelectedPriceRange(priceRange);
+    setSelectedPropertyType(propertyType);
+  };
 
   return (
-    <div className="flex justify-center items-center gap-2 border bg-white rounded-full py-2 px-4 relative">
+    <div className="bg-white p-4 rounded-xl shadow-lg flex flex-col md:flex-row gap-4">
       {/* District Dropdown */}
-      <div
-        className="relative cursor-pointer"
-        onClick={() => setIsDistrictDropdownOpen(!isDistrictDropdownOpen)}
+      <select
+        value={district}
+        onChange={(e) => setDistrict(e.target.value)}
+        className="border p-2 rounded-lg w-full"
       >
-        <div>{selectedDistrict}</div>
-
-        {isDistrictDropdownOpen && (
-          <div
-            className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
-            onMouseEnter={() => setIsDistrictDropdownOpen(true)}
-            onMouseLeave={() => setIsDistrictDropdownOpen(false)}
-          >
-            <div
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                setSelectedDistrict("Select District");
-                setIsDistrictDropdownOpen(false);
-              }}
-            >
-              Select District
-            </div>
-            {districts.map((district, index) => (
-              <div
-                key={index}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  setSelectedDistrict(district);
-                  setIsDistrictDropdownOpen(false);
-                }}
-              >
-                {district}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="text-gray-400">|</div>
+        <option value="">Select District</option>
+        <option value="Colombo">Colombo</option>
+        <option value="Gampaha">Gampaha</option>
+        <option value="Kandy">Kandy</option>
+      </select>
 
       {/* Price Range Dropdown */}
-      <div
-        className="relative cursor-pointer"
-        onClick={() => setIsPriceRangeDropdownOpen(!isPriceRangeDropdownOpen)}
+      <select
+        value={priceRange}
+        onChange={(e) => setPriceRange(e.target.value)}
+        className="border p-2 rounded-lg w-full"
       >
-        <div>{selectedPriceRange}</div>
-
-        {isPriceRangeDropdownOpen && (
-          <div
-            className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
-            onMouseEnter={() => setIsPriceRangeDropdownOpen(true)}
-            onMouseLeave={() => setIsPriceRangeDropdownOpen(false)}
-          >
-            <div
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                setSelectedPriceRange("Select Price Range");
-                setIsPriceRangeDropdownOpen(false);
-              }}
-            >
-              Select Price Range
-            </div>
-            {priceRanges.map((range, index) => (
-              <div
-                key={index}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  setSelectedPriceRange(range);
-                  setIsPriceRangeDropdownOpen(false);
-                }}
-              >
-                {range}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="text-gray-400">|</div>
+        <option value="">Select Price Range</option>
+        <option value="0-100000">0 - 100,000 LKR</option>
+        <option value="100000-500000">100,000 - 500,000 LKR</option>
+        <option value="500000-1000000">500,000 - 1,000,000 LKR</option>
+        <option value="1000000">1,000,000+ LKR</option>
+      </select>
 
       {/* Property Type Dropdown */}
-      <div
-        className="relative cursor-pointer"
-        onClick={() =>
-          setIsPropertyTypeDropdownOpen(!isPropertyTypeDropdownOpen)
-        }
+      <select
+        value={propertyType}
+        onChange={(e) => setPropertyType(e.target.value)}
+        className="border p-2 rounded-lg w-full"
       >
-        <div>{selectedPropertyType}</div>
+        <option value="">Select Property Type</option>
+        <option value="Apartment">Apartment</option>
+        <option value="House">House</option>
+        <option value="Land">Land</option>
+        <option value="Office">Office</option>
+      </select>
 
-        {isPropertyTypeDropdownOpen && (
-          <div
-            className="absolute left-0 mt-2 w-40 bg-white border border-gray-300 rounded-lg shadow-lg z-10"
-            onMouseEnter={() => setIsPropertyTypeDropdownOpen(true)}
-            onMouseLeave={() => setIsPropertyTypeDropdownOpen(false)}
-          >
-            <div
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                setSelectedPropertyType("Select Property Type");
-                setIsPropertyTypeDropdownOpen(false);
-              }}
-            >
-              Select Property Type
-            </div>
-            {propertyTypes.map((type, index) => (
-              <div
-                key={index}
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  setSelectedPropertyType(type);
-                  setIsPropertyTypeDropdownOpen(false);
-                }}
-              >
-                {type}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <button className="bg-primary text-white p-1 rounded-full">
+      {/* Search Button with Custom SVG Icon */}
+      <button
+        onClick={handleSearch}
+        className="bg-white text-[#00032e]  p-2  w-full md:w-auto flex items-center justify-center gap-2"
+      >
+        {/* Custom SVG Search Icon */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-5"
+          fill="currentColor"
+          className="size-9"
         >
+          <path d="M8.25 10.875a2.625 2.625 0 1 1 5.25 0 2.625 2.625 0 0 1-5.25 0Z" />
           <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            fillRule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.125 4.5a4.125 4.125 0 1 0 2.338 7.524l2.007 2.006a.75.75 0 1 0 1.06-1.06l-2.006-2.007a4.125 4.125 0 0 0-3.399-6.463Z"
+            clipRule="evenodd"
           />
         </svg>
       </button>

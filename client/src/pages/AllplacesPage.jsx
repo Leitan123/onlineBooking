@@ -8,7 +8,10 @@ export default function AllplacesPage() {
   const [places, setPlaces] = useState([]);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("All"); // Default to "All"
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [selectedPriceRange, setSelectedPriceRange] = useState("");
+  const [selectedPropertyType, setSelectedPropertyType] = useState("");
 
   useEffect(() => {
     axios
@@ -24,15 +27,49 @@ export default function AllplacesPage() {
       });
   }, []);
 
-  // Function to filter places by type
-  const filterPlaces = (category) => {
-    setSelectedCategory(category);
-    if (category === "All") {
-      setFilteredPlaces(places);
-    } else {
-      const filtered = places.filter((place) => place.type === category);
-      setFilteredPlaces(filtered);
+  useEffect(() => {
+    filterPlaces();
+  }, [
+    selectedDistrict,
+    selectedPriceRange,
+    selectedPropertyType,
+    selectedCategory,
+  ]);
+
+  const filterPlaces = () => {
+    let filtered = places;
+
+    // Filter by district
+    if (selectedDistrict) {
+      filtered = filtered.filter(
+        (place) => place.district === selectedDistrict
+      );
     }
+
+    // Filter by price range
+    if (selectedPriceRange) {
+      const [min, max] = selectedPriceRange.split("-").map(Number);
+      filtered = filtered.filter((place) => {
+        const price = Number(place.price); // Ensure price is treated as a number
+        return max ? price >= min && price <= max : price >= min;
+      });
+    }
+
+    // Filter by property type
+    if (selectedPropertyType) {
+      filtered = filtered.filter(
+        (place) => place.propertyType === selectedPropertyType
+      );
+    }
+
+    // Filter by selected category
+    if (selectedCategory !== "All") {
+      filtered = filtered.filter(
+        (place) => place.propertyType === selectedCategory
+      );
+    }
+
+    setFilteredPlaces(filtered);
   };
 
   return (
@@ -52,7 +89,11 @@ export default function AllplacesPage() {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-0"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 w-full max-w-2xl">
-              <Search />
+              <Search
+                setSelectedDistrict={setSelectedDistrict}
+                setSelectedPriceRange={setSelectedPriceRange}
+                setSelectedPropertyType={setSelectedPropertyType}
+              />
             </div>
             <img
               className="w-full h-[300px] object-cover rounded-2xl transform transition-transform duration-500 hover:scale-105"
@@ -66,7 +107,7 @@ export default function AllplacesPage() {
             {["All", "Apartment", "House", "Land", "Office"].map((category) => (
               <button
                 key={category}
-                onClick={() => filterPlaces(category)}
+                onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-lg transition-all duration-300 ${
                   selectedCategory === category
                     ? "bg-[#edbf6d] text-white"
@@ -102,7 +143,7 @@ export default function AllplacesPage() {
                       {/* Title and Price */}
                       <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black text-white p-4 text-lg font-semibold">
                         <h3>{place.title}</h3>
-                        <p>${place.price}</p>
+                        <p>{place.price} LKR</p>
                       </div>
                     </div>
                   </Link>

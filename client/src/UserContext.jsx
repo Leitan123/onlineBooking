@@ -4,6 +4,7 @@ import axios from "axios";
 export const UserContext = createContext({});
 
 export function UserContextProvider({ children }) {
+  // ✅ Ensure it's a named export
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
 
@@ -16,7 +17,7 @@ export function UserContextProvider({ children }) {
       })
       .catch((error) => {
         console.error("Error fetching profile:", error);
-        setReady(true); // Ensure `ready` is set to true even on error to avoid hanging state
+        setReady(true); // Ensure `ready` is set to true even on error
       });
   }, []);
 
