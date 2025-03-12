@@ -12,6 +12,9 @@ textarea {
 textarea {
   height: 140px;
 }
+body {
+  background-color: #78999e;
+}
 
 button {
   @apply bg-gray-300;
@@ -21,16 +24,54 @@ button.primary {
   @apply bg-[#edbf6d] text-[#00032e] hover:bg-[#d9a856] p-2 w-full  rounded-2xl;
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
+@keyframes marquee-right {
+  from {
+    transform: translateX(-100%);
   }
-  100% {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(100%);
+  }
+  to {
     transform: translateX(-100%);
   }
 }
 
-.animate-marquee {
-  display: flex;
-  animation: marquee 20s linear infinite;
+.animate-marquee-right {
+  animation: marquee-right 20s linear infinite;
+}
+
+.animate-marquee-left {
+  animation: marquee-left 20s linear infinite;
+}
+
+body,
+html {
+  overflow-x: hidden;
+}
+
+/* In your global CSS file (e.g., App.css or a specific component stylesheet) */
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+}
+.pop-out {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.pop-out.visible {
+  opacity: 1;
+  transform: scale(1);
 }

@@ -328,6 +328,23 @@ app.post("/bookings", async (req, res) => {
   });
 });
 
+app.get("/bookings", async (req, res) => {
+  const { token } = req.cookies;
+
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) return res.status(401).json({ message: "Unauthorized" });
+
+    try {
+      const favorites = await Booking.find({ user: userData.id }).populate(
+        "place"
+      );
+      res.json(favorites);
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching favorites", error });
+    }
+  });
+});
+
 // Remove a place from favorites
 app.delete("/bookings/:placeId", async (req, res) => {
   const { token } = req.cookies;
@@ -382,24 +399,6 @@ app.get("/bookings/:id", async (req, res) => {
     } catch (error) {
       console.error("Error checking favorite status:", error);
       res.status(500).json({ message: "Internal server error" });
-    }
-  });
-});
-
-// Get all favorite places for a user
-app.get("/bookings", async (req, res) => {
-  const { token } = req.cookies;
-
-  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) return res.status(401).json({ message: "Unauthorized" });
-
-    try {
-      const favorites = await Booking.find({ user: userData.id }).populate(
-        "place"
-      );
-      res.json(favorites);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching favorites", error });
     }
   });
 });

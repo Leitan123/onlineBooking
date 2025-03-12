@@ -9,11 +9,11 @@ export default function Header() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="p-4 flex justify-between items-center bg-[#00032e] shadow-lg">
-      {/* Logo and Home Link */}
+    <header className="py-5 px-8 flex justify-between items-center bg-[#1a2c39] shadow-lg text-white">
+      {/* Logo */}
       <Link
         to="/"
-        className="flex items-center gap-2 text-[#edbf6d] font-bold text-xl"
+        className="flex items-center gap-2 text-[#edbf6d] font-bold text-2xl"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +21,7 @@ export default function Header() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="size-6"
+          className="size-8"
         >
           <path
             strokeLinecap="round"
@@ -33,83 +33,36 @@ export default function Header() {
       </Link>
 
       {/* Navigation Links */}
-      <nav className="flex gap-6 text-[#edbf6d] font-medium">
-        <Link
-          to="/"
-          className={`hover:text-white transition duration-300 ${
-            isActive("/") ? "text-white" : ""
-          }`}
-        >
-          Home
-        </Link>
-        <Link
-          to="/buy"
-          className={`hover:text-white transition duration-300 ${
-            isActive("/buy") ? "text-white" : ""
-          }`}
-        >
-          Buy
-        </Link>
-        <Link
-          to="/sell"
-          className={`hover:text-white transition duration-300 ${
-            isActive("/sell") ? "text-white" : ""
-          }`}
-        >
-          Sell
-        </Link>
-        <Link
-          to="/about"
-          className={`hover:text-white transition duration-300 ${
-            isActive("/about") ? "text-white" : ""
-          }`}
-        >
-          About
-        </Link>
-        <Link
-          to="/contacts"
-          className={`hover:text-white transition duration-300 ${
-            isActive("/contacts") ? "text-white" : ""
-          }`}
-        >
-          Contacts
-        </Link>
+      <nav className="flex gap-8 text-lg">
+        {[
+          "Home",
+          "About Us",
+          "Properties",
+          "Agencies",
+          "Pages",
+          "Blog",
+          "Contact Us",
+        ].map((item, index) => (
+          <Link
+            key={index}
+            to={`/${item.toLowerCase().replace(/\s+/g, "")}`}
+            className={`hover:text-[#edbf6d] transition duration-300 ${
+              isActive(`/${item.toLowerCase().replace(/\s+/g, "")}`)
+                ? "text-[#edbf6d]"
+                : ""
+            }`}
+          >
+            {item}
+          </Link>
+        ))}
       </nav>
 
       {/* User Account Section */}
       <Link
         to={user ? "/account" : "/login"}
-        className="flex items-center gap-2 border border-[#edbf6d] rounded-full py-2 px-4 text-[#edbf6d] hover:text-white transition duration-300"
+        className="flex items-center gap-2 bg-[#edbf6d] text-[#00032e] font-medium px-5 py-3 rounded-lg hover:bg-[#d9a856] transition duration-300"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          className="size-6"
-        >
-          <path
-            fillRule="evenodd"
-            d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z"
-            clipRule="evenodd"
-          />
-        </svg>
-
-        <div className="text-[#edbf6d]">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="size-6"
-          >
-            <path
-              fillRule="evenodd"
-              d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-
-        {!!user && <div className="text-[#edbf6d]">{user.name}</div>}
+        {user ? user.name : "Login"}
       </Link>
     </header>
   );

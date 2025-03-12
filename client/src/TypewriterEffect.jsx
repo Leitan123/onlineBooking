@@ -30,7 +30,7 @@ const TypewriterEffect = () => {
   }, [subIndex, isDeleting, index, types]);
 
   return (
-    <span className="text-yellow-400">
+    <span className="text-[#edbf6d]">
       {types[index].substring(0, subIndex)}
       <span className="animate-blink text-white">|</span>
     </span>

@@ -11,6 +11,7 @@ import PropertyGrid from "../PropertyGrid";
 import TestimonialSlider from "../TestimonialSlider";
 import "../index.css"; // Import the stylesheet for this component
 import Footer from "../Footer";
+import StatsSection from "../statsSection";
 
 export default function IndexPage() {
   const [places, setPlaces] = useState([]);
@@ -37,6 +38,7 @@ export default function IndexPage() {
     autoplaySpeed: 3000,
     arrows: true,
     dots: true,
+    pauseOnHover: false, // This will make the images slide even when the cursor is on top
   };
 
   const sliderImages = [
@@ -47,7 +49,7 @@ export default function IndexPage() {
   ];
 
   return (
-    <div className="mt-8 flex-1">
+    <div className=" flex-1">
       {loading ? (
         <div className="absolute top-0 left-0 w-full h-screen flex justify-center items-center bg-white z-50">
           <video
@@ -61,13 +63,13 @@ export default function IndexPage() {
       ) : (
         <>
           {/* Hero Section */}
-          <div className="relative w-full">
+          <div className="relative w-full h-screen">
             {/* Background Image Slider */}
             <Slider {...settings}>
               {sliderImages.map((image, index) => (
                 <div key={index} className="relative">
                   <img
-                    className="w-full h-[500px] object-cover  transition-transform duration-500 hover:scale-105"
+                    className="w-full h-screen object-cover transition-transform duration-500 hover:scale-105"
                     src={image}
                     alt={`Slider Image ${index + 1}`}
                   />
@@ -87,9 +89,10 @@ export default function IndexPage() {
             </h1>
 
             {/* Search Component */}
-            <div className="absolute top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 w-full max-w-lg px-4">
-              <Search />
-            </div>
+            <div className="absolute top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 w-full max-w-lg px-4"></div>
+          </div>
+          <div className="ml-10">
+            <StatsSection />
           </div>
 
           {/* Property Listings */}
@@ -98,7 +101,7 @@ export default function IndexPage() {
           </div>
 
           {/* Our Goal Section */}
-          <section className="bg-[#00032e] text-white py-20 px-6 md:px-12 lg:px-24 text-center">
+          <section className="bg-[#1a2c39] text-white py-20 px-6 md:px-12 lg:px-24 text-center">
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-[#edbf6d] mb-6">
                 Our Goal
@@ -132,19 +135,38 @@ export default function IndexPage() {
 
           {/* Moving Places Images Section */}
           <div
-            className="mt-8 px-4 overflow-hidden relative"
-            style={{
-              backgroundImage: "url('/images/slider2.jpg')", // Replace with your image URL
-              backgroundSize: "110%", // Make the background image slightly bigger
-              backgroundPosition: "top center", // Position it at the top to create a band effect
-              backgroundRepeat: "no-repeat",
-              height: "300px", // Adjust the height to make it appear like a band
-            }}
+            className="mt-8 px-4 overflow-hidden relative bg-fixed bg-cover bg-center h-[600px]"
+            style={{ backgroundImage: "url('/images/land_bg2.jpeg')" }}
           >
             {/* Dark Shade Overlay */}
-            <div className="absolute inset-0 bg-black opacity-40 z-10"></div>
+            <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
 
-            <div className="flex space-x-6 animate-marquee relative z-20 pt-6">
+            {/* Marquee Right */}
+            <div className="flex space-x-6 animate-marquee-right relative z-20 pt-6">
+              {places.length > 0 &&
+                places.map((place) => (
+                  <Link
+                    to={"/place/" + place._id}
+                    key={place._id}
+                    className="flex-shrink-0 w-[300px]"
+                  >
+                    <div className="rounded-2xl overflow-hidden relative group">
+                      {place.photos?.[0] && (
+                        <img
+                          className="w-full h-[250px] object-cover rounded-2xl transform transition-transform duration-300 group-hover:scale-110"
+                          src={
+                            "http://localhost:4000/uploads/" + place.photos[0]
+                          }
+                          alt={place.title}
+                        />
+                      )}
+                    </div>
+                  </Link>
+                ))}
+            </div>
+
+            {/* Marquee Left */}
+            <div className="flex space-x-6 animate-marquee-left relative z-20 pt-6">
               {places.length > 0 &&
                 places.map((place) => (
                   <Link
@@ -167,6 +189,7 @@ export default function IndexPage() {
                 ))}
             </div>
           </div>
+
           <div className="flex justify-center mt-6">
             <Link
               to="/Allplaces"
