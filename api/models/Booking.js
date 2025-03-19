@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const FavoriteSchema = new mongoose.Schema(
+const BookingSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     place: {
@@ -17,13 +17,15 @@ const FavoriteSchema = new mongoose.Schema(
     mobile: String,
     mail: String,
     price: Number,
+    district: String,
+    propertyType: String,
   },
   { timestamps: true }
 );
 
-// Ensure the uniqueness of the `user` and `place` pair at the database level
-FavoriteSchema.index({ user: 1, place: 1 }, { unique: true });
+// Remove the unique index constraint
+BookingSchema.index({ user: 1, place: 1 }); // No unique constraint here
 
-const Favorite = mongoose.model("Bookings", FavoriteSchema); // Fixed the model name
+const Booking = mongoose.model("Booking", BookingSchema); // Use "Booking" instead of "Bookings"
 
-module.exports = Favorite;
+module.exports = Booking;

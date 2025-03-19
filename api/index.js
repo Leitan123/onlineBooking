@@ -125,7 +125,6 @@ app.post("/upload-by-link", async (req, res) => {
 
 const photosMiddleware = multer({ dest: "uploads" });
 const path = require("path");
-const BookingModel = require("./models/Booking");
 
 app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
   const uploadedFiles = [];
@@ -282,6 +281,8 @@ app.delete("/places/:id", async (req, res) => {
 app.get("/index-places", async (req, res) => {
   res.json(await Place.find());
 });
+// Add a place to favorites
+app.use(express.urlencoded({ extended: true }));
 
 // Add a place to favorites
 app.post("/bookings", async (req, res) => {
@@ -305,6 +306,19 @@ app.post("/bookings", async (req, res) => {
     if (err) return res.status(401).json({ message: "Unauthorized" });
 
     try {
+      // Check if the user has already added this place to their favorites
+      const existingBooking = await Booking.findOne({
+        user: userData.id,
+        place: placeId,
+      });
+
+      if (existingBooking) {
+        return res
+          .status(400)
+          .json({ message: "This place is already in your favorites." });
+      }
+
+      // Add the place to the user's favorites
       const favorite = await Booking.create({
         user: userData.id,
         place: placeId,

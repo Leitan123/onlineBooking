@@ -10,7 +10,7 @@ export default function AccountNav() {
   function linkClasses(type = null) {
     let classes = "py-2 px-6 inline-flex gap-1 rounded-full";
     if (type === subpage) {
-      classes += " bg-primary text-white ";
+      classes += " bg-[#edbf6d] text-[#00032e] hover:bg-[#d9a856] ";
     } else {
       classes += " bg-gray-200";
     }

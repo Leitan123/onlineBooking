@@ -67,7 +67,7 @@ export default function PlacesPage() {
           {action !== "new" && (
             <div className="text-center">
               <Link
-                className="inline-flex gap-1 bg-primary text-white py-4 px-6 rounded-full"
+                className="inline-flex gap-1 bg-[#edbf6d] text-[#00032e] hover:bg-[#d9a856] py-4 px-6 rounded-full"
                 to={"/account/places/new"}
               >
                 <svg
